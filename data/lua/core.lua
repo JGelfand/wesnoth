@@ -16,7 +16,35 @@ function wesnoth.confirm(title, msg)
 	return wesnoth.show_message_box(title, msg, "yes_no", true)
 end
 
+--for luaW_pushlocation
+location_mt={}
+function location_mt.__index(t,k)
+        if k=='x' then
+            return t[1]
+        elseif k=='y' then
+            return t[2]
+        else
+            return nil
+        end
+end
 
+function location_mt.__newindex(t,k,v)
+    if k=='x' then
+        t[1]=v
+    elseif k=='y' then
+        t[2]=v
+    else
+        rawset(t,k,v)
+    end
+end
+
+
+function wesnoth.location(x,y)
+    loc={x,y}
+    setmetatable(loc, location_mt)
+    return loc
+end
+    
 --[========[Config Manipulation Functions]========]
 
 wml = {}

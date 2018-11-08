@@ -631,13 +631,20 @@ void luaW_filltable(lua_State *L, const config& cfg)
 
 void luaW_pushlocation(lua_State *L, const map_location& ml)
 {
-	lua_createtable(L, 2, 0);
-
+        //start by getting a reference to wesnoth.location()
+        lua_getglobal(L, "wesnoth");
+        lua_pushstring(L,"location");
+        lua_gettable(L, -2);
+                
+        //push args x and y
 	lua_pushinteger(L, ml.wml_x());
-	lua_rawseti(L, -2, 1);
-
 	lua_pushinteger(L, ml.wml_y());
-	lua_rawseti(L, -2, 2);
+        
+        //call wesnoth.location(x,y)
+        lua_call(L, 2,1);
+        
+        //cleanup: pop wesnoth from the stack
+        lua_remove(L,-2);
 }
 
 bool luaW_tolocation(lua_State *L, int index, map_location& loc) {
